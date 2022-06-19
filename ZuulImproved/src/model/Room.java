@@ -1,0 +1,111 @@
+package model;
+
+import java.util.HashMap;
+import java.util.Set;
+
+/**
+ * Class Room - a room in an adventure game.
+ *
+ * This class is part of the "World of Zuul" application. "World of Zuul" is a
+ * very simple, text based adventure game.
+ *
+ * A "Room" represents one location in the scenery of the game. It is connected
+ * to other rooms via exits. The exits are labelled north, east, south, west.
+ * For each direction, the room stores a reference to the neighboring room, or
+ * null if there is no exit in that direction.
+ * 
+ * @author Michael Kolling and David J. Barnes
+ * @version 2011.07.31
+ */
+public class Room {
+	private String description;
+	private HashMap<String, Room> exitList;
+	private Edible food;
+	private Item item;
+
+	/**
+	 * Create a room described "description". Initially, it has no exits.
+	 * "description" is something like "a kitchen" or "an open court yard".
+	 * 
+	 * @param description The room's description.
+	 */
+	public Room(String description) {
+		this.description = description;
+		exitList = new HashMap<String, Room>();
+		item = null;
+		food = Edible.buildEdible();
+		
+	}
+
+	/**
+	 * @return the item
+	 */
+	public Item getItem() {
+		return item;
+	}
+
+	/**
+	 * @param newItem the item to set
+	 */
+	public void setItem(Item newItem) {
+		item = newItem;
+	}
+
+	/**
+	 * @return the food
+	 */
+	public Edible getFood() {
+		return food;
+	}
+	
+	public void eatFood() {
+		food = null;
+	}
+	/**
+	 * Define the exits of this room. Every direction either leads to another room
+	 * or is null (no exit there).
+	 */
+	public void setExit(String direction, Room destination) {
+		exitList.put(direction, destination);
+	}
+
+	/**
+	 * @return The description of the room.
+	 */
+	public String getDescription() {
+		String fullDescription = description;
+		if(food != null) {
+			fullDescription += "\nThere is something to eat here!";
+			//optional to inform the player
+			if(food.isHealthy()) {
+				fullDescription += "\nThe food is safe to eat.";
+			}else {
+				fullDescription += "\nI wouldn`t eat the food in this room if I was you!.";
+			}
+		}else {
+			fullDescription += "\nNothing to eat!";
+		}
+		if(item != null) {
+			fullDescription += "\nThe " + item.getItemName() + " is here";
+		}else {
+			fullDescription += "\nNo items in this room";
+			item = null;
+		}
+		
+		return fullDescription;
+	}
+
+	public String getExits() {
+		String exitString = "";
+		Set<String> exitDirections = exitList.keySet();
+		for (String dir : exitDirections) {
+			exitString = exitString + dir + " ";
+		}
+		return exitString;
+	}
+
+	public Room getExit(String direction) {
+		return exitList.get(direction);
+	}
+
+}
